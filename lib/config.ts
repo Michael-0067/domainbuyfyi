@@ -5,67 +5,67 @@
 
 export const NICHE = {
   // ── Site identity ──────────────────────────────────────────────────────────
-  name: "Vacuum Buy FYI",
-  url: (process.env.NEXT_PUBLIC_SITE_URL ?? "https://vacuumbuy.fyi")
+  name: "Domain Buy FYI",
+  url: (process.env.NEXT_PUBLIC_SITE_URL ?? "https://domainbuy.fyi")
     .replace(/^https:\/\/www\./, "https://"),
 
   // ── Product niche ──────────────────────────────────────────────────────────
-  subject: "vacuum",                              // singular noun, lowercase
-  subjectPlural: "vacuums",                       // plural noun, lowercase
-  subjectLabel: "Vacuum",                         // title-case label for headings, e.g. "Vacuum Briefs"
-  productDescription: "vacuums and floor care equipment",
+  subject: "domain",                              // singular noun, lowercase
+  subjectPlural: "domains",                       // plural noun, lowercase
+  subjectLabel: "Domain",                         // title-case label for headings, e.g. "Vacuum Briefs"
+  productDescription: "for-sale domain names and domain portfolio listings",
 
   // ── Product categories ─────────────────────────────────────────────────────
   // Used for browse filters and AI classification. "Other" must always be last.
   // Keep these high-level — 6 to 10 categories works best.
   categories: [
-    "Robot Vacuums",
-    "Upright Vacuums",
-    "Canister Vacuums",
-    "Stick Vacuums",
-    "Handheld Vacuums",
-    "Wet-Dry Vacuums",
-    "Central Vacuum Systems",
-    "Backpack Vacuums",
-    "Vacuum Accessories",
+    "Brandable Domains",
+    "Keyword Domains",
+    "Geo Domains",
+    "Exact Match Domains",
+    "Aged Domains",
+    "Premium Domains",
+    "Short Domains",
+    "Niche Domains",
+    "Domain Bundles",
     "Other",
   ] as const satisfies readonly string[],
 
   // ── Contact ────────────────────────────────────────────────────────────────
-  contactEmail: "hello@vacuumbuy.fyi",
+  contactEmail: "hello@domainbuy.fyi",
 
   // ── Affiliate ──────────────────────────────────────────────────────────────
-  affiliateTag: "vacuumbuyfyi-20",
+  affiliateTag: "domainbuyfyi-20",
 
   // ── Accent colors ──────────────────────────────────────────────────────────
   // These are injected as CSS variables at runtime and override globals.css.
-  accent:      "#1f3a5f",
-  accentLight: "#e8eef6",
-  accentHover: "#162d4a",
+  accent:      "#000080",
+  accentLight: "#e6e9f7",
+  accentHover: "#000066",
 
   // ── Homepage hero ──────────────────────────────────────────────────────────
-  heroLine1:      "Vacuum intelligence,",
+  heroLine1:      "Domain intelligence,",
   heroLine2:      "before you buy.",
-  heroSubtext:    "Informed Briefs on vacuums and floor care equipment — structured, analytical, and free of hype. Compare side by side. Read the roundups. Buy with clarity.",
-  heroCtaPrimary: "Compare Vacuums →",
+  heroSubtext:    "Informed Briefs on for-sale domain names and domain portfolio listings — structured, analytical, and free of hype. Compare side by side. Read the roundups. Buy with clarity.",
+  heroCtaPrimary: "Compare Domains →",
 
   // ── Footer ─────────────────────────────────────────────────────────────────
-  footerTagline:           "Vacuum Buy FYI provides structured vacuum product analysis based on publicly available data.",
-  footerCrossPromoIntro:   "Looking beyond vacuums?",
-  footerCrossPromoLink:    "For broader product roundups, visit Smart Buy FYI",
+  footerTagline:           "Domain Buy FYI provides structured domain listing analysis based on publicly available information.",
+  footerCrossPromoIntro:   "Domains not your thing?",
+  footerCrossPromoLink:    "For a variety of retail comparisons, visit SmartBuy.FYI",
   footerCrossPromoUrl:     "https://smartbuy.fyi",
 
   // ── AI Analyst persona ─────────────────────────────────────────────────────
   guru: {
-    name:   "Buying Analyst",
-    slug:   "buying-analyst",
+    name:   "Domain Analyst",
+    slug:   "domain-analyst",
     model:  process.env.MODEL_GURU_ARTICLE ?? "gpt-5.4-mini",
-    systemPrompt: `You are the Buying Analyst, a vacuum cleaner specialist and product analyst with years of experience researching floor care technology across every price tier and use case.
+    systemPrompt: `You are the Domain Analyst, a specialist in evaluating domain names, domain portfolios, and digital naming opportunities across a wide range of styles, niches, and price tiers.
 
-Your approach is methodical and evidence-based. You study specifications, parse engineering tradeoffs, and translate technical details into clear purchasing intelligence. You are not impressed by marketing language. You care about what actually works, for whom, and under what conditions.
+Your approach is methodical and evidence-based. You assess naming quality, commercial utility, brand potential, search relevance, memorability, extension fit, and resale positioning. You are not impressed by hype, inflated valuations, or vague claims about "premium" quality. You care about what a domain is, what makes it useful or weak, who it may suit, and what kind of opportunity it may realistically represent.
 
-You write for buyers who want to understand what they are getting before they spend money — not to be sold something. Your voice is direct, organized, and precise. You surface weaknesses and uncertainties without hesitation. You do not hype.
+You write for buyers who want to understand a domain before they acquire it — not to be dazzled by sales language. Your voice is direct, organized, and precise. You surface weaknesses, risks, and uncertainty without hesitation. You do not hype.
 
-Your focus: robot vacuums, upright vacuums, canister vacuums, stick vacuums, handheld vacuums, wet-dry vacs, and all related floor care equipment. You understand filtration systems, motor types, suction measurement, battery performance, dustbin design, brush roll technology, and the practical realities of owning and maintaining cleaning equipment.`,
+Your focus: brandable domains, keyword domains, geo domains, exact match domains, aged domains, short domains, niche domains, premium domains, and bundled domain offerings. You understand naming structure, spelling friction, clarity, recall, intent matching, buyer fit, extension perception, liquidity factors, and the practical realities of buying, holding, developing, and reselling domain names.`,
   },
 } as const;
