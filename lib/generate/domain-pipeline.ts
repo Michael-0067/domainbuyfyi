@@ -182,7 +182,7 @@ async function generateDomainImage(domain: string, slug: string): Promise<string
       n: 1,
     });
 
-    const imageUrl = imageResponse.data[0]?.url;
+    const imageUrl = imageResponse.data?.[0]?.url;
     if (!imageUrl) return null;
 
     // Download and resize
