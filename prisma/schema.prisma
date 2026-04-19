@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Product {
+  id                   String    @id @default(cuid())
+  asin                 String?   @unique
+  slug                 String    @unique
+  canonicalSourceUrl   String?
+  productName          String
+  brand                String?
+  category             String?
+  shortDescription     String?
+  normalizedAttributes Json
+  rawSourcePayload     Json?
+  imageUrls            Json?
+  priceData            Json?
+  reviewSummaryData    Json?
+  generatedPageData    Json?
+  briefContent         String?
+  pageStatus           String    @default("pending")
+  lastGeneratedAt      DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  roundupItems         RoundupItem[]
+  comparisonProducts   ComparisonProduct[]
+}
+
+model Roundup {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  category    String?
+  status      String    @default("draft")
+  introText   String?
+  closingText String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  publishedAt DateTime?
+
+  items RoundupItem[]
+}
+
+model RoundupItem {
+  id               String  @id @default(cuid())
+  roundupId        String
+  productId        String
+  position         Int
+  generatedSummary String?
+
+  titleSnapshot    String
+  priceSnapshot    String?
+  categorySnapshot String?
+  thumbSnapshot    String?
+  briefUrl         String
+  amazonUrl        String?
+
+  roundup Roundup @relation(fields: [roundupId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@unique([roundupId, productId])
+}
+
+// Permanent user-generated comparison pages
+model Comparison {
+  id           String   @id @default(cuid())
+  canonicalKey String   @unique
+  slug         String   @unique
+  title        String
+  productIds   Json
+  createdAt    DateTime @default(now())
+
+  products ComparisonProduct[]
+}
+
+model ComparisonProduct {
+  id           String @id @default(cuid())
+  comparisonId String
+  productId    String
+  position     Int
+
+  comparison Comparison @relation(fields: [comparisonId], references: [id], onDelete: Cascade)
+  product    Product    @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@unique([comparisonId, productId])
+}

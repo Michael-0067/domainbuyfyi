@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #fafaf8;
+  --surface: #ffffff;
+  --surface-alt: #f0f4f9;
+  --border: #d8e2ee;
+  --border-strong: #b0c4d8;
+  --text: #1a1a18;
+  --text-secondary: #4a4a46;
+  --text-muted: #8a8a84;
+  /* accent vars are overridden at runtime from lib/config.ts — edit there, not here */
+  --accent: #1f3a5f;
+  --accent-light: #e8eef6;
+  --accent-hover: #162d4a;
+  --error: #b91c1c;
+  --error-light: #fef2f2;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-alt: var(--surface-alt);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-text: var(--text);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-light: var(--accent-light);
+  --color-accent-hover: var(--accent-hover);
+  --color-error: var(--error);
+  --color-error-light: var(--error-light);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
