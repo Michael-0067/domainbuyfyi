@@ -1,12 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db/prisma";
-import { resolveInput } from "@/lib/ingestion/resolver";
-import { ingestProduct } from "@/lib/generate/pipeline";
+import { ingestDomain } from "@/lib/generate/domain-pipeline";
 
-// Admin-only — no public access, no rate limiting needed
+function isAdminRequest(req: NextRequest): boolean {
+  return req.cookies.get("vbf_admin")?.value === process.env.ADMIN_SECRET;
+}
+
+function isDomainInput(input: string): boolean {
+  if (/^https?:\/\//i.test(input)) return false;
+  if (/^www\./i.test(input)) return false;
+  if (input.includes("/") || input.includes("@")) return false;
+  const parts = input.split(".");
+  if (parts.length < 2 || parts.length > 3) return false;
+  return parts.every((p) => /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$/.test(p));
+}
+
 export async function POST(req: NextRequest) {
-  const isAdmin = req.cookies.get("vbf_admin")?.value === process.env.ADMIN_SECRET;
-  if (!isAdmin) {
+  if (!isAdminRequest(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -20,22 +30,18 @@ export async function POST(req: NextRequest) {
 
   if (!input) return NextResponse.json({ error: "No input provided" }, { status: 400 });
 
+  if (!isDomainInput(input)) {
+    return NextResponse.json(
+      { error: "Enter a plain domain name only — e.g. example.com or domain.co.uk. No http, www, or paths." },
+      { status: 400 }
+    );
+  }
+
   try {
-    // Quick cache check
-    const cached = await findCachedProduct(input);
+    const cached = await findCachedDomain(input);
     if (cached) return NextResponse.json({ slug: cached.slug, cached: true });
 
-    const resolved = await resolveInput(input);
-    if (!resolved) {
-      return NextResponse.json({ error: "Could not find a product matching that input. Try a full Amazon URL or ASIN." }, { status: 404 });
-    }
-
-    const byAsin = await db.product.findFirst({
-      where: { asin: resolved.product.asin, pageStatus: "complete" },
-    });
-    if (byAsin) return NextResponse.json({ slug: byAsin.slug, cached: true });
-
-    const product = await ingestProduct(resolved.product);
+    const product = await ingestDomain(input);
     return NextResponse.json({ slug: product.slug, cached: false });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
@@ -44,12 +50,15 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function findCachedProduct(input: string) {
-  const cleaned = input.trim();
-  const bySlug = await db.product.findFirst({ where: { slug: cleaned, pageStatus: "complete" }, select: { slug: true } });
+async function findCachedDomain(domain: string) {
+  const slug = domain.toLowerCase().replace(/\./g, "-");
+  const bySlug = await db.product.findFirst({
+    where: { slug, pageStatus: "complete" },
+    select: { slug: true },
+  });
   if (bySlug) return bySlug;
-  if (/^[A-Z0-9]{10}$/i.test(cleaned)) {
-    return db.product.findFirst({ where: { asin: cleaned.toUpperCase(), pageStatus: "complete" }, select: { slug: true } });
-  }
-  return null;
+  return db.product.findFirst({
+    where: { productName: domain, pageStatus: "complete" },
+    select: { slug: true },
+  });
 }
