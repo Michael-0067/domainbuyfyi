@@ -60,7 +60,7 @@ export default async function BriefPage({ params }: Props) {
     where: { slug },
     select: {
       id: true, slug: true, productName: true, category: true,
-      shortDescription: true, generatedPageData: true, briefContent: true,
+      shortDescription: true, imageUrls: true, generatedPageData: true, briefContent: true,
       canonicalSourceUrl: true, lastGeneratedAt: true, pageStatus: true, createdAt: true,
       roundupItems: { select: { roundup: { select: { slug: true, title: true } } } },
     },
@@ -71,6 +71,8 @@ export default async function BriefPage({ params }: Props) {
   const pageData = product.generatedPageData as GeneratedPageData | null;
   const visitUrl = domainVisitUrl(product.canonicalSourceUrl, product.productName);
   const facts = domainFacts(product.productName);
+  const images = product.imageUrls as string[] | null;
+  const landscapeImage = images?.[0] ?? null;
 
   const relatedBriefs = await db.product.findMany({
     where: {
@@ -122,6 +124,18 @@ export default async function BriefPage({ params }: Props) {
           </Link>
         </div>
       </div>
+
+      {/* Landscape painting */}
+      {landscapeImage && (
+        <div className="rounded-2xl overflow-hidden w-full" style={{ border: "1px solid var(--border)" }}>
+          <img
+            src={landscapeImage}
+            alt={`Landscape impression of ${product.productName}`}
+            className="w-full object-cover"
+            style={{ aspectRatio: "900/506", display: "block" }}
+          />
+        </div>
+      )}
 
       {/* Domain Analyst brief */}
       {product.briefContent && (

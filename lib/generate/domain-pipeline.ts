@@ -4,6 +4,8 @@
  */
 
 import OpenAI from "openai";
+import fs from "fs";
+import path from "path";
 import { db } from "@/lib/db/prisma";
 import { GURU } from "@/lib/guru";
 import { NICHE } from "@/lib/config";
@@ -38,10 +40,11 @@ export async function ingestDomain(domain: string): Promise<Product> {
     update: { pageStatus: "generating" },
   });
 
-  const [article, sections, category] = await Promise.all([
+  const [article, sections, category, imagePath] = await Promise.all([
     generateDomainArticle(domain),
     generateDomainSections(domain),
     classifyProductCategory(domain, [], null),
+    generateDomainImage(domain, slug),
   ]);
 
   return db.product.update({
@@ -50,6 +53,7 @@ export async function ingestDomain(domain: string): Promise<Product> {
       briefContent: article,
       generatedPageData: sections as object,
       category,
+      imageUrls: imagePath ? [imagePath] : [],
       pageStatus: "complete",
       lastGeneratedAt: new Date(),
     },
@@ -151,4 +155,53 @@ No bold text. No markdown. No headers. Do not fabricate facts.`,
     temperature: 0.35,
   });
   return completion.choices[0].message.content?.trim() ?? "";
+}
+
+async function generateDomainImage(domain: string, slug: string): Promise<string | null> {
+  try {
+    // Interpret the domain into a landscape theme
+    const themeCompletion = await openai.chat.completions.create({
+      model: MODEL_SECTIONS,
+      messages: [
+        {
+          role: "system",
+          content: "You interpret domain names into short landscape painting themes. Output only a single evocative phrase describing a landscape scene — no explanations, no punctuation at the end. Example: 'a misty mountain valley at golden hour'",
+        },
+        { role: "user", content: `Domain: ${domain}` },
+      ],
+      temperature: 0.8,
+    });
+    const theme = themeCompletion.choices[0].message.content?.trim() ?? domain;
+
+    // Generate the image
+    const imageResponse = await openai.images.generate({
+      model: "dall-e-3",
+      prompt: `An impressionist oil painting landscape: ${theme}. Soft expressive brushwork, warm atmospheric light, painterly texture, wide panoramic composition. No text, no people, no logos, no numbers, no signs, no words.`,
+      size: "1792x1024",
+      quality: "standard",
+      n: 1,
+    });
+
+    const imageUrl = imageResponse.data[0]?.url;
+    if (!imageUrl) return null;
+
+    // Download and resize
+    const res = await fetch(imageUrl);
+    const buffer = Buffer.from(await res.arrayBuffer());
+
+    const sharp = (await import("sharp")).default;
+    const dir = path.join(process.cwd(), "public", "domain-images");
+    await fs.promises.mkdir(dir, { recursive: true });
+
+    const filepath = path.join(dir, `${slug}.jpg`);
+    await sharp(buffer)
+      .resize(900, 506, { fit: "cover" })
+      .jpeg({ quality: 82 })
+      .toFile(filepath);
+
+    return `/domain-images/${slug}.jpg`;
+  } catch (err) {
+    console.error("[domain-image]", err);
+    return null;
+  }
 }
