@@ -176,20 +176,18 @@ async function generateDomainImage(domain: string, slug: string): Promise<string
 
     // Generate the image
     const imageResponse = await openai.images.generate({
-      model: "dall-e-3",
+      model: "gpt-image-1",
       prompt: `An impressionist oil painting landscape: ${theme}. Soft expressive brushwork, warm atmospheric light, painterly texture, wide panoramic composition. No text, no people, no logos, no numbers, no signs, no words.`,
-      size: "1792x1024",
-      quality: "standard",
+      size: "1536x1024",
+      quality: "low",
       n: 1,
     });
 
-    const imageUrl = imageResponse.data?.[0]?.url;
-    if (!imageUrl) return null;
+    const b64 = imageResponse.data?.[0]?.b64_json;
+    if (!b64) return null;
 
-    // Download, resize, and save as WebP
-    const res = await fetch(imageUrl);
-    if (!res.ok) throw new Error(`Image fetch failed: ${res.status}`);
-    const buffer = Buffer.from(await res.arrayBuffer());
+    // Decode base64 to buffer
+    const buffer = Buffer.from(b64, "base64");
 
     const dir = path.join(process.cwd(), "public", "domain-images");
     await fs.promises.mkdir(dir, { recursive: true });
