@@ -6,7 +6,6 @@
 import OpenAI from "openai";
 import fs from "fs";
 import path from "path";
-import sharp from "sharp";
 import { db } from "@/lib/db/prisma";
 import { GURU } from "@/lib/guru";
 import { NICHE } from "@/lib/config";
@@ -186,20 +185,19 @@ async function generateDomainImage(domain: string, slug: string): Promise<string
     const imageUrl = imageResponse.data?.[0]?.url;
     if (!imageUrl) return null;
 
-    // Download and resize
+    // Download and save
     const res = await fetch(imageUrl);
+    if (!res.ok) throw new Error(`Image fetch failed: ${res.status}`);
     const buffer = Buffer.from(await res.arrayBuffer());
 
     const dir = path.join(process.cwd(), "public", "domain-images");
     await fs.promises.mkdir(dir, { recursive: true });
 
-    const filepath = path.join(dir, `${slug}.jpg`);
-    await sharp(buffer)
-      .resize(900, 506, { fit: "cover" })
-      .jpeg({ quality: 82 })
-      .toFile(filepath);
+    const filepath = path.join(dir, `${slug}.png`);
+    await fs.promises.writeFile(filepath, buffer);
+    console.log(`[domain-image] saved ${filepath}`);
 
-    return `/domain-images/${slug}.jpg`;
+    return `/domain-images/${slug}.png`;
   } catch (err) {
     console.error("[domain-image]", err);
     return null;
