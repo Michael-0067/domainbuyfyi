@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  serverExternalPackages: ["sharp"],
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "m.media-amazon.com" },
@@ -28,8 +29,8 @@ const nextConfig: NextConfig = {
       // www → canonical (301)
       {
         source: "/:path*",
-        has: [{ type: "host", value: "www.vacuumbuy.fyi" }],
-        destination: "https://vacuumbuy.fyi/:path*",
+        has: [{ type: "host", value: "www.domainbuy.fyi" }],
+        destination: "https://domainbuy.fyi/:path*",
         permanent: true,
       },
       // Legacy product URLs

@@ -6,6 +6,7 @@
 import OpenAI from "openai";
 import fs from "fs";
 import path from "path";
+import sharp from "sharp";
 import { db } from "@/lib/db/prisma";
 import { GURU } from "@/lib/guru";
 import { NICHE } from "@/lib/config";
@@ -189,7 +190,6 @@ async function generateDomainImage(domain: string, slug: string): Promise<string
     const res = await fetch(imageUrl);
     const buffer = Buffer.from(await res.arrayBuffer());
 
-    const sharp = (await import("sharp")).default;
     const dir = path.join(process.cwd(), "public", "domain-images");
     await fs.promises.mkdir(dir, { recursive: true });
 
