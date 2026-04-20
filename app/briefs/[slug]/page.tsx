@@ -109,7 +109,7 @@ export default async function BriefPage({ params }: Props) {
           <a
             href={visitUrl}
             target="_blank"
-            rel="noopener noreferrer nofollow"
+            rel="noopener"
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold text-white hover:opacity-90 transition-opacity"
             style={{ background: "var(--accent)" }}
           >
