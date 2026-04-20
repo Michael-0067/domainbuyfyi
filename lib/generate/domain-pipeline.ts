@@ -197,7 +197,7 @@ async function generateDomainImage(domain: string, slug: string): Promise<string
     await fs.promises.writeFile(filepath, buffer);
     console.log(`[domain-image] saved ${filepath}`);
 
-    return `/domain-images/${slug}.png`;
+    return `/api/domain-images/${slug}.png`;
   } catch (err) {
     console.error("[domain-image]", err);
     return null;
