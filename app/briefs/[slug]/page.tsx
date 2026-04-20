@@ -202,6 +202,14 @@ export default async function BriefPage({ params }: Props) {
         </dl>
       </section>
 
+      {/* Why Buy This Domain */}
+      {pageData?.whyBuy && (
+        <section className="space-y-3">
+          <h2 className="text-sm font-semibold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>Why Buy This Domain</h2>
+          <p className="text-base leading-relaxed" style={{ color: "var(--text-secondary)" }}>{pageData.whyBuy}</p>
+        </section>
+      )}
+
       {/* Contact CTA */}
       <div className="rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-4" style={{ background: "var(--surface-alt)", border: "1px solid var(--border)" }}>
         <div className="flex-1 space-y-1">

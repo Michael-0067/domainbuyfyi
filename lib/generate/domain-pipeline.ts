@@ -89,14 +89,16 @@ Formatting rules:
 }
 
 async function generateDomainSections(domain: string): Promise<GeneratedPageData> {
-  const [whatToKnow, keyFactsSummary] = await Promise.all([
+  const [whatToKnow, keyFactsSummary, whyBuy] = await Promise.all([
     generateWhatToKnow(domain),
     generateKeyFacts(domain),
+    generateWhyBuy(domain),
   ]);
   return {
     overview: "",
     keyFactsSummary,
     whatToKnow,
+    whyBuy,
     reviewIntelligence: {
       commonPraise: [],
       commonComplaints: [],
@@ -154,6 +156,28 @@ No bold text. No markdown. No headers. Do not fabricate facts.`,
       },
     ],
     temperature: 0.35,
+  });
+  return completion.choices[0].message.content?.trim() ?? "";
+}
+
+async function generateWhyBuy(domain: string): Promise<string> {
+  const completion = await openai.chat.completions.create({
+    model: MODEL_SECTIONS,
+    messages: [
+      {
+        role: "system",
+        content: `You write a single short paragraph explaining why a domain name is worth acquiring, for ${NICHE.name}.
+
+Focus entirely on the positives: naming strengths, commercial opportunity, brand potential, and who this domain could serve well. No caveats, no risks, no "however". Pure, credible optimism — not hype. Write as a domain professional who genuinely sees the value.
+
+One paragraph only. 3–5 sentences. Plain prose, no markdown, no bullet points.`,
+      },
+      {
+        role: "user",
+        content: `Write a "Why Buy This Domain" paragraph for: ${domain}`,
+      },
+    ],
+    temperature: 0.6,
   });
   return completion.choices[0].message.content?.trim() ?? "";
 }

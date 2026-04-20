@@ -62,6 +62,7 @@ export interface GeneratedPageData {
   keyFactsSummary: string;
   reviewIntelligence: ReviewIntelligence;
   whatToKnow: string;
+  whyBuy?: string;
 }
 
 export interface ReviewIntelligence {
