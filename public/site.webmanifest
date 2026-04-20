@@ -1,6 +1,6 @@
 {
-  "name": "Site Name",
-  "short_name": "SiteName",
+  "name": "Domain Buy FYI",
+  "short_name": "DomainBuyFYI",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
@@ -15,7 +15,7 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "#000000",
+  "theme_color": "#000080",
   "background_color": "#ffffff",
   "display": "standalone"
 }
