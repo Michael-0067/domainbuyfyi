@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db/prisma";
 import type { PriceData } from "@/lib/normalize";
+import DeleteProductButton from "./DeleteProductButton";
 
 export const dynamic = "force-dynamic";
 
@@ -87,6 +88,7 @@ export default async function AdminBriefsPage() {
                 >
                   View →
                 </Link>
+                <DeleteProductButton id={p.id} name={p.productName} />
               </div>
             </div>
           );
